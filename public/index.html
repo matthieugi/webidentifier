@@ -1,0 +1,20 @@
+<head>
+  <link rel='stylesheet' href="index.css" />
+</head>
+<header>
+  <title>Hello</title>
+</header>
+<body>
+  <div id='center'>
+    <h1 id='maintitle'>Hello there !</h1>
+  </div>
+  <script>
+    window.fetch('/color').then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      document.body.style.backgroundColor = data.color;
+      document.title = 'Hello ' + data.color;
+      document.getElementById('maintitle').innerHTML = 'Hello ' + data.color;
+    });
+  </script>
+</body>
