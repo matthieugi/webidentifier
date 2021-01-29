@@ -8,13 +8,15 @@
   <div id='center'>
     <h1 id='maintitle'>Hello there !</h1>
   </div>
-  <script>
-    window.fetch('/color').then((response) => response.json())
-    .then((data) => {
+  <script async>
+    const func = async () => {
+      const response = await window.fetch('/color');
+      const data = await response.json();
       console.log(data);
       document.body.style.backgroundColor = data.color;
       document.title = 'Hello ' + data.color;
       document.getElementById('maintitle').innerHTML = 'Hello ' + data.color;
-    });
+    };
+    func();
   </script>
 </body>
