@@ -7,6 +7,7 @@
 <body>
   <div id='center'>
     <h1 id='maintitle'>Hello there !</h1>
+    <h2 id='secrettitle'>Your secret is : </h2>
   </div>
   <script async>
     const func = async () => {
@@ -16,6 +17,7 @@
       document.body.style.backgroundColor = data.color;
       document.title = 'Hello ' + data.color;
       document.getElementById('maintitle').innerHTML = 'Hello ' + data.color;
+      document.getElementById('secrettitle').innerHTML += data.secret;
     };
     func();
   </script>
