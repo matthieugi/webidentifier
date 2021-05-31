@@ -11,13 +11,21 @@
   </div>
   <script async>
     const func = async () => {
-      const response = await window.fetch('/color');
-      const data = await response.json();
-      console.log(data);
-      document.body.style.backgroundColor = data.color;
-      document.title = 'Hello ' + data.color;
-      document.getElementById('maintitle').innerHTML = 'Hello ' + data.color;
-      document.getElementById('secrettitle').innerHTML += data.secret;
+      const responseColor = await window.fetch('/color');
+      const dataColor = await responseColor.json();
+      
+      console.log(dataColor);
+      
+      document.body.style.backgroundColor = dataColor.color;
+      document.title = 'Hello ' + dataColor.color;
+      document.getElementById('maintitle').innerHTML = 'Hello ' + dataColor.color;
+      
+      const responseSecret = await window.fetch('/secret');
+      const dataSecret = await responseSecret.json();
+      
+      console.log(dataSecret);
+      
+      document.getElementById('secrettitle').innerHTML += dataSecret.secret;
     };
     func();
   </script>
