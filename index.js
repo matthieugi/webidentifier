@@ -13,7 +13,8 @@ app.use(express.static('./public'));
 
 app.get('/color', (req, res) => {
   res.send({
-    color: process.env.BGCOLOR
+    color: process.env.BGCOLOR,
+    env: prod
   })
 });
 
