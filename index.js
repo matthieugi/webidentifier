@@ -3,8 +3,8 @@ const app = express();
 const morgan = require('morgan');
 
 require('dotenv').config();
-const PORT = process.env.port || 8080;
-const BGCOLOR = process.env.bgcolor;
+const PORT = process.env.PORT || 8080;
+const BGCOLOR = process.env.BGCOLOR;
 
 console.log(PORT);
 
