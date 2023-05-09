@@ -1,52 +1,90 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
-const axios = require('axios');
+app.use(morgan('tiny'));
 
 require('dotenv').config();
 
-console.log(`Trying to start server on : ${process.env.PORT}`);
+const { Pool } = require('pg');
 
-app.use(morgan('tiny'));
-app.use(express.static('./public'));
+const poolConfig = {
+  connectionString: process.env.PG_CONNECTION_STRING
+};
 
-app.get('/secret', async(req, res) => {
-  console.log(`Vault URL : ${process.env.VAULTURL}`);
-  console.log(`Secret Name : ${process.env.VAULTSECRETNAME}`);
-
-  const metadataResponse = await axios.get('http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://vault.azure.net', 
-    {
-      headers: {
-        Metadata: true
-      }
-    }
-  );
-
-  const accessToken = metadataResponse.data.access_token;
-
-  console.log('Access Token : ' + accessToken);
-
-  const vaultResponse = await axios.get(`https://${process.env.VAULTURL}.vault.azure.net/secrets/${process.env.VAULTSECRETNAME}?api-version=2016-10-01`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    }
-  });
-  
-  const secret = vaultResponse.data.value;
-
-  console.log('Token Secret : ' + secret);
-
-  res.send({
-    secret: secret
-  })
-});
+const pool = new Pool(poolConfig);
 
 app.get('/color', async (req, res) => {
-  res.send({
-    color: process.env.BGCOLOR
-  })
+
+  const colors = await pool.query('SELECT name FROM colors');
+
+  res.send(JSON.stringify(colors.rows));
 });
 
+app.get('/color/:name', async (req, res) => {
+  const name = req.params.name;
+
+  try {
+    const colors = await pool.query('SELECT name FROM colors WHERE name = $1', [name]);
+    if (colors.rows.length === 0) {
+      res.status(404).send('Not found');
+      return;
+    }
+    res.status(200).send();
+  }
+  catch (err) {
+    console.log(err);
+    res.status(500).send('Error');
+  }
+});
+
+
+app.delete('/color/:name', async (req, res) => {
+  const name = req.params.name;
+
+  try {
+    const colors = await pool.query('DELETE FROM colors WHERE name = $1', [name]);
+    if (colors.rowCount === 0) {
+      res.status(404).send('Not found');
+      return;
+    }
+    res.status(200).send();
+  }
+  catch (err) {
+    console.log(err);
+    res.status(500).send('Error');
+  }
+});
+
+
+app.post('/color', async (req, res) => {
+  if (!req.query.name) {
+    res.status(400).send('Missing name');
+    return
+  }
+
+  const name = req.query.name;
+  try {
+    await pool.query('INSERT INTO colors (name) VALUES ($1)', [name]);
+    res.status(201).send('Created');
+  }
+  catch (err) {
+    console.log(err);
+  
+    if(err.constraint === 'name_unique') {
+      res.status(403).send('Color already exists');
+      return;
+    }
+
+    res.status(500).send({ error: err.detail });
+  }
+});
+
+
+console.log(`Trying to start server on : ${process.env.PORT}`);
 app.listen(process.env.PORT, () => {
   console.log('server running on port : ' + process.env.PORT);
+});
+
+process.on('exit', async () => {
+  await pool.end();
 });
