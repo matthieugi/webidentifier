@@ -7,7 +7,6 @@
 <body>
   <div id='center'>
     <h1 id='maintitle'>Hello there !</h1>
-    <h2 id='secrettitle'>Your secret is : </h2>
   </div>
   <script async>
     const func = async () => {
@@ -20,12 +19,6 @@
       document.title = 'Hello ' + dataColor.color;
       document.getElementById('maintitle').innerHTML = 'Hello ' + dataColor.color;
       
-      const responseSecret = await window.fetch('/secret');
-      const dataSecret = await responseSecret.json();
-      
-      console.log(dataSecret);
-      
-      document.getElementById('secrettitle').innerHTML += dataSecret.secret;
     };
     func();
   </script>
