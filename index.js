@@ -2,11 +2,12 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 
-require('dotenv').config();
-const COLOR = process.env.COLOR || "red";
+const COLOR = process.env.BGCOLOR || "blue";
 const PORT = process.env.PORT || 3000;
 
 console.log(`Trying to start server on : ${PORT}`);
+console.log(`Color is : ${COLOR}`);
+
 
 app.use(morgan('tiny'));
 app.use(express.static('./public'));
