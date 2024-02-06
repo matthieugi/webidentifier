@@ -4,8 +4,8 @@
   "description": "a simple web app to detect an environement configuration in Kubernetes",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node --env-file=.env index.js"
+    "start": "node --env-file=.env index.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "nodemon": "^2.0.22"
   }
 }
